@@ -65,15 +65,23 @@ body {
     display: flex;
 }
 /* 绘图栏 */
+#rest_div {
+    display: flex;
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
 #draw_div {
     position: relative;
-    margin: auto; padding: 0px; /* 自动margin居中 */
-    width: 840px; height: 840px;
-    /* width: 100%; padding-bottom: 100%; */
+    display: flex;
+    margin: 0px; padding: 0px;
     background-color: rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
 }
 #frame_div, #drawn_div, #drawing_div {
     position: absolute;
+    display: flex;
+    box-sizing: border-box;
 }
 #frame_div {z-index: 1000;} #drawn_div {z-index: 2000;} #drawing_div {z-index: 3000;}
 /* 鼠标跟随 */

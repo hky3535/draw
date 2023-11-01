@@ -17,10 +17,12 @@
             <ul id="elements_ul"></ul>
             <textarea id="console_textarea" readonly></textarea>
         </div>
-        <div id="draw_div">
-            <div id="frame_div"><canvas id="frame_canvas"></canvas></div>
-            <div id="drawn_div"></div>
-            <div id="drawing_div"><canvas id="drawing_canvas"></canvas></div>
+        <div id="rest_div">
+            <div id="draw_div">
+                <div id="frame_div"><canvas id="frame_canvas"></canvas></div>
+                <div id="drawn_div"></div>
+                <div id="drawing_div"><canvas id="drawing_canvas"></canvas></div>
+            </div>
         </div>
         <div id="mxy_div"></div>
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>

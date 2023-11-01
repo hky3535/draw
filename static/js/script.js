@@ -6,6 +6,7 @@ const element_textarea = document.getElementById('element_textarea');
 const elements_ul = document.getElementById('elements_ul');
 const console_textarea = document.getElementById('console_textarea');
 
+const rest_div = document.getElementById('rest_div');
 const draw_div = document.getElementById('draw_div');
 const frame_canvas = document.getElementById('frame_canvas');
 const frame_canvas_context = frame_canvas.getContext('2d'); // 图像
@@ -76,7 +77,9 @@ function loadFrame() {
     frame_img.onload = function() {
         let input_width = frame_img.width;
         let input_height = frame_img.height; // 原图长宽
-        let output_wh = draw_div.clientWidth; // 目标长宽（直接从div获取）
+        let output_wh = Math.min(rest_div.clientWidth, rest_div.clientHeight);
+        draw_div.style.width = output_wh;
+        draw_div.style.height = output_wh;
 
         // 归一化到目标尺寸（如果不需要归一化则保持不变）
         if (input_width > output_wh || input_height > output_wh) {
