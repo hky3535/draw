@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>draw_web</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <div id="items_div">
+            <ul id="items_ul"></ul>
+            <div id="upload_div"><span>拖入上传</span></div>
+        </div>
+        <div id="elements_div">
+            <input id="name_input" type="text">
+            <textarea id="element_textarea" readonly></textarea>
+            <ul id="elements_ul"></ul>
+        </div>
+        <div id="draw_div">
+            <div id="frame_div"><canvas id="frame_canvas"></canvas></div>
+            <div id="drawn_div"></div>
+            <div id="drawing_div"><canvas id="drawing_canvas"></canvas></div>
+        </div>
+        <div id="mxy_div"></div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

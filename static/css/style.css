@@ -1,0 +1,101 @@
+html {
+    width: 100%; height: 100%;
+    margin: 0px; padding: 0px;
+    display: flex;
+    box-sizing: border-box;
+    user-select: none;
+}
+body {
+    width: 100%; height: 100%;
+    margin: 0px; padding: 0px;
+    display: flex;
+    box-sizing: border-box;
+}
+/* 项目栏 */
+#items_div {
+    width: 350px; height: 100%;
+    margin: 0px; padding: 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+#upload_div {
+    width: 350px; height: 150px;
+    margin: 0px; padding: 0px;
+    border: 10px dashed rgba(0, 0, 0, 0.1); 
+    display: flex;
+    align-items: center; justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    position: relative;
+}
+.dragover {
+    background-color: rgba(255, 255, 255, 0.05) !important; 
+}
+/* 元素栏 */
+#elements_div {
+    width: 350px; height: 100%;
+    margin: 0px; padding: 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+#name_input {
+    width: 100%; 
+    margin: 0px; padding: 0px;
+    background-color: rgba(0, 0, 0, 0.0);
+    pointer-events: none;
+}
+#element_textarea {
+    width: 100%; height: 250px;
+    margin: 0px; padding: 0px;
+    background-color: rgba(0, 0, 0, 0.0);
+    resize: none;
+}
+/* 绘图栏 */
+#draw_div {
+    position: relative;
+    margin: auto; padding: 0px; /* 自动margin居中 */
+    width: 640px; height: 640px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+#frame_div, #drawn_div, #drawing_div {
+    position: absolute;
+    top: 0px; left: 0px; width: 640px; height: 640px;
+}
+#frame_div {z-index: 1000;} #drawn_div {z-index: 2000;} #drawing_div {z-index: 3000;}
+/* 鼠标跟随 */
+#mxy_div {
+    position: fixed;
+    top: 0px; left: 0px;
+    padding: 10px 10px;
+    background-color: rgba(80, 80, 80, 0.8);
+    color: rgba(255, 255, 255, 1.0);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 4000;
+    display: none;
+}
+/* 全局元素 */
+ul {
+    width: 100%; height: 100%;
+    margin: 0px; padding: 0px;
+    overflow: auto;
+    list-style: none;
+}
+li {
+    margin: 0px; padding: 0px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.0);
+    display: flex;
+    align-items: center;
+}
+li:hover {
+    margin: 0px; padding: 0px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+li button {
+    border-width: 0px;
+    margin-left: auto;
+    background-color: rgba(0, 0, 0, 0.05);
+}
