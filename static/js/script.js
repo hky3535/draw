@@ -4,7 +4,9 @@ const upload_div = document.getElementById('upload_div');
 const name_input = document.getElementById('name_input');
 const element_textarea = document.getElementById('element_textarea');
 const elements_ul = document.getElementById('elements_ul');
+const console_textarea = document.getElementById('console_textarea');
 
+const draw_div = document.getElementById('draw_div');
 const frame_canvas = document.getElementById('frame_canvas');
 const frame_canvas_context = frame_canvas.getContext('2d'); // 图像
 const drawn_div = document.getElementById('drawn_div'); // 绘制完成
@@ -22,6 +24,11 @@ let type = -1; // 当前的绘制类别
 let type_map = {1: '多边形', 2: '矩形', 3: '线段'};
 let points = []; // 当前的绘制点集合
 let mx = 0; let my = 0; // 正在移动的鼠标位置
+
+function console(info) {
+    console_textarea.value += info + "\n";
+    console_textarea.scrollTop = console_textarea.scrollHeight;
+}
 
 function loadItems() { // 加载项目列表
     fetch('/items')
@@ -42,10 +49,10 @@ function loadItems() { // 加载项目列表
                 items_ul.appendChild(item_li);
             });
             if (name_list.length != 0) {loadItem(name_list[0]);} // 自动加载第一个项目
-            console.info('获取到items列表：', items_list);
+            console(`获取到items列表：${JSON.stringify(items_list)}`);
         })
         .catch(error => {
-            console.error('Error: ', error);
+            console('Error: ' + error);
         });
 }
 function loadItem(name) { // 加载项目 loadItem --> loadFrame --> loadElements
@@ -55,10 +62,10 @@ function loadItem(name) { // 加载项目 loadItem --> loadFrame --> loadElement
             item_data = data;
             name_input.value = name; // 显示名称
             loadFrame(); // 显示图像
-            console.info('获取到item：', name);
+            console('获取到item：' + name);
         })
         .catch(error => {
-            console.error('Error:', error);
+            console('Error:' + error);
         });
 }
 function loadFrame() {
@@ -69,7 +76,8 @@ function loadFrame() {
     frame_img.onload = function() {
         let input_width = frame_img.width;
         let input_height = frame_img.height; // 原图长宽
-        let output_wh = 640; // 目标长宽
+        let output_wh = draw_div.clientWidth; // 目标长宽（直接从div获取）
+
         // 归一化到目标尺寸（如果不需要归一化则保持不变）
         if (input_width > output_wh || input_height > output_wh) {
             resize_rate = output_wh / Math.max(input_width, input_height);
@@ -81,7 +89,7 @@ function loadFrame() {
         frame_canvas.height = input_height * resize_rate;
         frame_canvas_context.clearRect(0, 0, output_wh, output_wh);
         frame_canvas_context.drawImage(frame_img, 0, 0, frame_canvas.width, frame_canvas.height);
-        console.info('图像加载成功：', `输入长宽：${input_width}*${input_height}；缩放比例：${resize_rate}`);
+        console(`图像加载成功：输入长宽：${input_width}*${input_height}；输出长宽：${output_wh}；缩放比例：${resize_rate}`);
         // 加载绘制元素
         loadElements();
     }
@@ -197,7 +205,7 @@ function drawing(click) {
         // 前后端同步 addElement --> updateItem --> loadElements
         addElement(type, points);
         // 重置绘制
-        console.info('绘制已完成：', type, points);
+        console(`绘制已完成： ${type_map[type]}, ${JSON.stringify(points)}`);
         type = -1;
         points = [];
         draw(type, drawing_canvas_context, points, 3, '#0000ff', true);
@@ -252,22 +260,22 @@ function uploadItem(item_data) { // 上传项目
     })
         .then(response => response.json())
         .then(data => {
-            console.info('上传成功');
+            console('上传成功');
             loadItems(); 
         })
         .catch(error => {
-            console.error('请求错误:', error);
+            console.error(`请求错误: ${error}`);
         });
 }
 function deleteItem(name) { // 删除项目
     fetch(`/delete?name=${name}`)
         .then(response => response.json())
         .then(data => {
-            console.info('删除项目：', name);
+            console(`删除项目：&{name}`);
             loadItems(); 
         })
         .catch(error => {
-            console.error('Error:', error);
+            console(`Error: ${error}`);
         });
 }
 function updateItem() { // 更新项目
@@ -282,10 +290,10 @@ function updateItem() { // 更新项目
     })
         .then(response => response.json())
         .then(data => {
-            console.info('更新成功');
+            console('项目更新成功');
         })
         .catch(error => {
-            console.error('请求错误:', error);
+            console(`请求错误: ${error}`);
         });
 }
 
@@ -341,22 +349,23 @@ function eventInit() { // 各种监听事件初始化
     });
     // 键盘操作动作监听
     document.addEventListener('keyup', function(event) {
-        points = [];
-        draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
-        console.info('新的键盘事件，绘制已重置：', points);
+        if (points.length != 0) {
+            console(`新的键盘事件，绘制已重置：${JSON.stringify(points)}`);
+            points = [];
+            draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
+        }
 
         let key = event.key;
-        if      (key === '1') {type = parseInt(key); console.info(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === '2') {type = parseInt(key); console.info(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === '3') {type = parseInt(key); console.info(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === 'q') {last(); console.info(`键盘事件：上一张`);}
-        else if (key === 'w') {undo(); console.info(`键盘事件：撤销绘制`);}
-        else if (key === 'e') {next(); console.info(`键盘事件：下一张`);}
-        else {console.info('键盘事件：事件未绑定：', key);}
+        if      (key === '1') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
+        else if (key === '2') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
+        else if (key === '3') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
+        else if (key === 'q') {last(); console(`键盘事件：上一张`);}
+        else if (key === 'w') {undo(); console(`键盘事件：撤销绘制`);}
+        else if (key === 'e') {next(); console(`键盘事件：下一张`);}
+        else {console(`键盘事件：事件未绑定：${key}`);}
     });
     drawing_canvas.addEventListener('click', function() {
         points.push([mx, my]);
-        console.info('当前点位：', points);
         drawing(true);
     });
     drawing_canvas.addEventListener('mousemove', function(event) {
@@ -374,9 +383,11 @@ function eventInit() { // 各种监听事件初始化
     });
     drawing_canvas.addEventListener('mouseleave', function() { // 超过绘制区域自动取消绘制
         mxy_div.style.display = 'none'; // 隐藏坐标
-        points = [];
-        draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
-        console.info('超出绘制区域，绘制已重置：', points);
+        if (points.length != 0) {
+            console(`超出绘制区域，绘制已重置：${JSON.stringify(points)}`);
+            points = [];
+            draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
+        }
     });
 }
 
