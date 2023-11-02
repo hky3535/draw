@@ -1,8 +1,7 @@
+const items_div = document.getElementById('items_div');
 const items_ul = document.getElementById('items_ul');
 const upload_div = document.getElementById('upload_div');
 
-const name_input = document.getElementById('name_input');
-const element_textarea = document.getElementById('element_textarea');
 const elements_ul = document.getElementById('elements_ul');
 const console_textarea = document.getElementById('console_textarea');
 
@@ -17,6 +16,7 @@ const drawing_canvas_context = drawing_canvas.getContext('2d'); // 绘制中
 const mxy_div = document.getElementById('mxy_div'); // 鼠标跟随
 
 let name_list = [];
+let now_name = "";
 let item_data = {}; // 当前项目信息 name frame elements (element: {'type': 1/2/3, 'points': [[x0, y0], ...]})
 
 let resize_rate = 1; // 当前图像计算出的缩放率
@@ -61,7 +61,8 @@ function loadItem(name) { // 加载项目 loadItem --> loadFrame --> loadElement
         .then(response => response.json())
         .then(data => {
             item_data = data;
-            name_input.value = name; // 显示名称
+            now_name = name;
+            console(`加载项目：${name}`);
             loadFrame(); // 显示图像
             console('获取到item：' + name);
         })
@@ -77,7 +78,7 @@ function loadFrame() {
     frame_img.onload = function() {
         let input_width = frame_img.width;
         let input_height = frame_img.height; // 原图长宽
-        let output_wh = Math.min(rest_div.clientWidth, rest_div.clientHeight);
+        let output_wh = Math.min(draw_div.clientWidth, draw_div.clientHeight);
         draw_div.style.width = output_wh;
         draw_div.style.height = output_wh;
 
@@ -113,7 +114,7 @@ function loadElement(element, index) {
     function showDetail(points) {
         // 显示具体坐标到 textarea
         points = points.map(([x, y]) => [Math.floor(x / resize_rate), Math.floor(y / resize_rate)]); // 反归一化
-        element_textarea.value = JSON.stringify(points); // 显示
+        console(`点位：${JSON.stringify(points)}`);
     }
     function showElement(index, element, action) {
         // 将元素突出显示
@@ -304,13 +305,13 @@ function undo() {
     delElement(drawn_div.querySelectorAll('canvas').length - 1);
 }
 function next() {
-    let index = name_list.findIndex(value => value == name_input.value); // 当前所在index
+    let index = name_list.findIndex(value => value == now_name); // 当前所在index
     index = index + 1; // 下一张
     if (index >= name_list.length) {index = 0;} // 确保循环不越界
     loadItem(name_list[index]);
 }
 function last() {
-    let index = name_list.findIndex(value => value == name_input.value);
+    let index = name_list.findIndex(value => value == now_name);
     index = index - 1; // 上一张
     if (index < 0) {index = name_list.length - 1;} // 确保循环不越界
     loadItem(name_list[index]);
@@ -321,7 +322,7 @@ function eventInit() { // 各种监听事件初始化
     upload_div.addEventListener('dragover', function(event) {
         event.preventDefault();
     });
-    upload_div.ondragenter = function(event) {
+    items_div.ondragenter = function(event) {
         event.preventDefault();
         upload_div.classList.add('dragover');
     };
@@ -335,14 +336,14 @@ function eventInit() { // 各种监听事件初始化
          // 获取拖拽进入的文件并验证文件扩展名
         let file = event.dataTransfer.files[0];
         if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
-            alert('只能上传 .jpg 图片');
+            alert('上传失败！只能上传.jpg格式图片');
             return;
         }
         // 图片转base64格式后上传
         let reader = new FileReader();
         reader.onload = (event) => {
             let item_data = {
-                name: file.name.replace('.jpg', '.json'), 
+                name: file.name.replace('.jpg', '.json').replace('.jpeg', '.json'), 
                 frame: event.target.result, 
                 elements: []
             };

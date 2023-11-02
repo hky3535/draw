@@ -4,78 +4,90 @@ html {
     display: flex;
     box-sizing: border-box;
     user-select: none;
+
+    background-image: url('Barents_bloom.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    color: rgba(235, 235, 235, 1.0);
+    font-family: "Microsoft YaHei";
 }
 body {
     width: 100%; height: 100%;
-    margin: 0px; padding: 0px;
+    margin: 0px; padding: 20px;
     display: flex;
     box-sizing: border-box;
 }
 /* 项目栏 */
 #items_div {
+    position: relative;
     width: 350px; height: 100%;
-    margin: 0px; padding: 0px;
-    border-right: 1px solid rgba(0, 0, 0, 1.0);
+    margin: 0px; padding: 10px;
+    margin-right: 20px;
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
 }
 #upload_div {
-    width: 100%; height: 150px;
-    margin: 0px; padding: 0px;
-    border: 10px dashed rgba(0, 0, 0, 0.1); 
-    display: flex;
-    align-items: center; justify-content: center;
-    background-color: rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    position: relative;
+    position: absolute;
+    top: 0px; left: 0px; width: 100%; height: 100%;
+    border-radius: 20px;
+    display: none; 
 }
-.dragover {
-    background-color: rgba(255, 255, 255, 0.05) !important; 
+.dragover{
+    display: block !important;
+    background-color: rgba(120, 120, 120, 0.3) !important; 
 }
 /* 元素栏 */
 #elements_div {
     width: 350px; height: 100%;
-    margin: 0px; padding: 0px;
-    border-right: 1px solid rgba(0, 0, 0, 1.0);
+    margin: 0px; padding: 10px;
+    margin-right: 20px;
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-#name_input {
-    width: 100%; 
-    margin: 0px; padding: 0px;
-    background-color: rgba(0, 0, 0, 0.0);
-    pointer-events: none;
-    box-sizing: border-box;
-}
-#element_textarea {
-    width: 100%; height: 250px;
-    margin: 0px; padding: 0px;
-    background-color: rgba(0, 0, 0, 0.0);
-    resize: none;
+    background-color: rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
 }
 #console_textarea {
-    width: 100%; height: 200px;
-    margin: 0px; padding: 0px;
+    width: 100%; height: 100%;
+    margin: 0px; padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.2);
     resize: none;
     box-sizing: border-box;
     display: flex;
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 14px;
+    font-family: "Microsoft YaHei";
+    overflow: auto;
+}
+#console_textarea:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+#console_textarea::-webkit-scrollbar {
+    display: none;
 }
 /* 绘图栏 */
 #rest_div {
     display: flex;
     flex: 1;
-    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
 }
 #draw_div {
     position: relative;
     display: flex;
-    margin: 0px; padding: 0px;
-    background-color: rgba(0, 0, 0, 0.2);
+    margin: auto; padding: 0px;
+    height: 800px; width: 800px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.0);
     box-sizing: border-box;
 }
 #frame_div, #drawn_div, #drawing_div {
@@ -102,6 +114,7 @@ ul {
     margin: 0px; padding: 0px;
     overflow: auto;
     list-style: none;
+    box-sizing: border-box;
 }
 li {
     margin: 0px; padding: 0px;
@@ -109,6 +122,9 @@ li {
     background-color: rgba(0, 0, 0, 0.0);
     display: flex;
     align-items: center;
+    font-family: "Microsoft YaHei";
+    font-size: 16px;
+    font-weight: 200;
 }
 li:hover {
     margin: 0px; padding: 0px;
@@ -118,4 +134,5 @@ li button {
     border-width: 0px;
     margin-left: auto;
     background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(200, 200, 200, 1.0);
 }
