@@ -357,16 +357,16 @@ function eventInit() { // 各种监听事件初始化
     });
     // 键盘操作动作监听
     document.addEventListener('keyup', function(event) {
-        if (points.length != 0) {
+        if (type != -1) {
             console(`新的键盘事件，绘制已重置`, false);
-            points = [];
+            type = -1;
             draw(-1, drawing_canvas_context, [], 3, '#0000ff', true);
         }
 
         let key = event.key;
-        if      (key === '1') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
-        else if (key === '2') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
-        else if (key === '3') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        if      (key === '1') {points = []; type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        else if (key === '2') {points = []; type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        else if (key === '3') {points = []; type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
         else if (key === 'q') {last(); console(`键盘事件：上一张`, false);}
         else if (key === 'w') {undo(); console(`键盘事件：撤销绘制`, false);}
         else if (key === 'e') {next(); console(`键盘事件：下一张`, false);}
@@ -391,9 +391,9 @@ function eventInit() { // 各种监听事件初始化
     });
     drawing_canvas.addEventListener('mouseleave', function() { // 超过绘制区域自动取消绘制
         mxy_div.style.display = 'none'; // 隐藏坐标
-        if (points.length != 0) {
+        if (type != -1) {
             console(`超出绘制区域，绘制已重置`, false);
-            points = [];
+            type = -1;
             draw(-1, drawing_canvas_context, [], 3, '#0000ff', true);
         }
     });
