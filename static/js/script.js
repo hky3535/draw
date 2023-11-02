@@ -26,8 +26,12 @@ let type_map = {1: '多边形', 2: '矩形', 3: '线段'};
 let points = []; // 当前的绘制点集合
 let mx = 0; let my = 0; // 正在移动的鼠标位置
 
-function console(info) {
-    console_textarea.value += info + "\n";
+function console(info, flush) {
+    if (flush) {
+        console_textarea.value = info;
+    } else {
+        console_textarea.value += info + "\n";
+    }
     console_textarea.scrollTop = console_textarea.scrollHeight;
 }
 
@@ -50,10 +54,10 @@ function loadItems() { // 加载项目列表
                 items_ul.appendChild(item_li);
             });
             if (name_list.length != 0) {loadItem(name_list[0]);} // 自动加载第一个项目
-            console(`获取到items列表：${JSON.stringify(items_list)}`);
+            console(`获取到项目列表：${JSON.stringify(items_list)}`, false);
         })
         .catch(error => {
-            console('Error: ' + error);
+            console(`获取项目列表失败：${error}`, false);
         });
 }
 function loadItem(name) { // 加载项目 loadItem --> loadFrame --> loadElements
@@ -62,12 +66,11 @@ function loadItem(name) { // 加载项目 loadItem --> loadFrame --> loadElement
         .then(data => {
             item_data = data;
             now_name = name;
-            console(`加载项目：${name}`);
+            console(`当前加载项目：${name}`, false);
             loadFrame(); // 显示图像
-            console('获取到item：' + name);
         })
         .catch(error => {
-            console('Error:' + error);
+            console(`加载项目失败：${error}`, false);
         });
 }
 function loadFrame() {
@@ -93,7 +96,7 @@ function loadFrame() {
         frame_canvas.height = input_height * resize_rate;
         frame_canvas_context.clearRect(0, 0, output_wh, output_wh);
         frame_canvas_context.drawImage(frame_img, 0, 0, frame_canvas.width, frame_canvas.height);
-        console(`图像加载成功：输入长宽：${input_width}*${input_height}；输出长宽：${output_wh}；缩放比例：${resize_rate}`);
+        console(`项目图像加载成功：图像分辨率：${input_width}*${input_height}；缩放比例：${resize_rate}`, false);
         // 加载绘制元素
         loadElements();
     }
@@ -111,15 +114,16 @@ function loadElements() {
     });
 }
 function loadElement(element, index) {
-    function showDetail(points) {
+    function showDetail(element) {
         // 显示具体坐标到 textarea
-        points = points.map(([x, y]) => [Math.floor(x / resize_rate), Math.floor(y / resize_rate)]); // 反归一化
-        console(`点位：${JSON.stringify(points)}`);
+        let _type = type_map[element["type"]];
+        let _points = element["points"].map(([x, y]) => [Math.floor(x / resize_rate), Math.floor(y / resize_rate)]); // 反归一化
+        console(`${_type}：${JSON.stringify(_points)}`, false);
     }
-    function showElement(index, element, action) {
-        // 将元素突出显示
+    function showElement(index, element, highlight) {
+        // 将元素 突出/取消突出 显示
         let context = drawn_div.querySelectorAll("canvas")[index].getContext('2d');
-        if (action) { // 突出
+        if (highlight) { // 突出
             draw(element['type'], context, element['points'], 3, '#ffffff', true);
         } else { // 取消突出
             draw(element['type'], context, element['points'], 3, '#0000ff', true);
@@ -131,10 +135,10 @@ function loadElement(element, index) {
     element_li.textContent = type_map[element['type']];
     element_li.addEventListener('mouseenter', () => {showElement(index, element, true);});
     element_li.addEventListener('mouseleave', () => {showElement(index, element, false);}); // 移入移出图像高亮显示
-    element_li.addEventListener('click', () => {showDetail(element['points']);}); // 点击显示点位详细信息
+    element_li.addEventListener('click', () => {showDetail(element);}); // 点击显示点位详细信息
     let element_button = document.createElement('button');
     element_button.textContent = 'delete';
-    element_button.addEventListener('click', () => {event.stopPropagation(); delElement(index)});
+    element_button.addEventListener('click', (event) => {event.stopPropagation(); delElement(index)});
     element_li.appendChild(element_button);
     elements_ul.appendChild(element_li);
     // 加载图层
@@ -209,7 +213,7 @@ function drawing(click) {
         // 前后端同步 addElement --> updateItem --> loadElements
         addElement(type, points);
         // 重置绘制
-        console(`绘制已完成： ${type_map[type]}, ${JSON.stringify(points)}`);
+        console(`${type_map[type]} 绘制已完成：${JSON.stringify(points)}`, false);
         type = -1;
         points = [];
         draw(type, drawing_canvas_context, points, 3, '#0000ff', true);
@@ -264,22 +268,22 @@ function uploadItem(item_data) { // 上传项目
     })
         .then(response => response.json())
         .then(data => {
-            console('上传成功');
+            console(`项目上传成功：${item_data["name"]}`, false);
             loadItems(); 
         })
         .catch(error => {
-            console.error(`请求错误: ${error}`);
+            console(`项目上传失败：${error}`, false);
         });
 }
 function deleteItem(name) { // 删除项目
     fetch(`/delete?name=${name}`)
         .then(response => response.json())
         .then(data => {
-            console(`删除项目：&{name}`);
+            console(`项目删除成功：${name}`, false);
             loadItems(); 
         })
         .catch(error => {
-            console(`Error: ${error}`);
+            console(`项目删除失败：${error}`, false);
         });
 }
 function updateItem() { // 更新项目
@@ -294,10 +298,10 @@ function updateItem() { // 更新项目
     })
         .then(response => response.json())
         .then(data => {
-            console('项目更新成功');
+            console(`项目更新成功：${item_data_new["name"]}`, false);
         })
         .catch(error => {
-            console(`请求错误: ${error}`);
+            console(`项目更新失败: ${error}`, false);
         });
 }
 
@@ -354,19 +358,19 @@ function eventInit() { // 各种监听事件初始化
     // 键盘操作动作监听
     document.addEventListener('keyup', function(event) {
         if (points.length != 0) {
-            console(`新的键盘事件，绘制已重置：${JSON.stringify(points)}`);
+            console(`新的键盘事件，绘制已重置`, false);
             points = [];
-            draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
+            draw(-1, drawing_canvas_context, [], 3, '#0000ff', true);
         }
 
         let key = event.key;
-        if      (key === '1') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === '2') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === '3') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`);}
-        else if (key === 'q') {last(); console(`键盘事件：上一张`);}
-        else if (key === 'w') {undo(); console(`键盘事件：撤销绘制`);}
-        else if (key === 'e') {next(); console(`键盘事件：下一张`);}
-        else {console(`键盘事件：事件未绑定：${key}`);}
+        if      (key === '1') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        else if (key === '2') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        else if (key === '3') {type = parseInt(key); console(`键盘事件：绘制${type_map[type]}`, false);}
+        else if (key === 'q') {last(); console(`键盘事件：上一张`, false);}
+        else if (key === 'w') {undo(); console(`键盘事件：撤销绘制`, false);}
+        else if (key === 'e') {next(); console(`键盘事件：下一张`, false);}
+        else {console(`键盘事件：事件未绑定：${key}`, false);}
     });
     drawing_canvas.addEventListener('click', function() {
         points.push([mx, my]);
@@ -388,9 +392,9 @@ function eventInit() { // 各种监听事件初始化
     drawing_canvas.addEventListener('mouseleave', function() { // 超过绘制区域自动取消绘制
         mxy_div.style.display = 'none'; // 隐藏坐标
         if (points.length != 0) {
-            console(`超出绘制区域，绘制已重置：${JSON.stringify(points)}`);
+            console(`超出绘制区域，绘制已重置`, false);
             points = [];
-            draw(-1, drawing_canvas_context, [], 3, '#0000ff', flush=true);
+            draw(-1, drawing_canvas_context, [], 3, '#0000ff', true);
         }
     });
 }

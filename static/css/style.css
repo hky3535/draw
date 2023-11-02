@@ -100,10 +100,10 @@ body {
 #mxy_div {
     position: fixed;
     top: 0px; left: 0px;
-    padding: 10px 10px;
-    background-color: rgba(80, 80, 80, 0.8);
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
     color: rgba(255, 255, 255, 1.0);
-    border-radius: 8px;
+    border-radius: 6px;
     pointer-events: none;
     z-index: 4000;
     display: none;
