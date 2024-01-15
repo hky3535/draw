@@ -355,23 +355,26 @@ function eventInit() { // 各种监听事件初始化
     upload_div.addEventListener('drop', function(event) {
         event.preventDefault();
         upload_div.classList.remove('dragover');
-         // 获取拖拽进入的文件并验证文件扩展名
-        let file = event.dataTransfer.files[0];
-        if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
-            alert('上传失败！只能上传.jpg格式图片');
-            return;
-        }
-        // 图片转base64格式后上传
-        let reader = new FileReader();
-        reader.onload = (event) => {
-            let item_data = {
-                name: file.name.replace('.jpg', '.json').replace('.jpeg', '.json'), 
-                frame: event.target.result, 
-                elements: []
+        // 获取拖拽进入的文件并逐个验证文件扩展名然后上传
+        let files = event.dataTransfer.files;
+        for (let i=0; i<files.length; i++) {
+            let file = files[i];
+            if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
+                alert('上传失败！只能上传.jpg格式图片');
+                continue;
+            }
+            // 图片转base64格式后上传
+            let reader = new FileReader();
+            reader.onload = (event) => {
+                let item_data = {
+                    name: file.name.replace('.jpg', '.json').replace('.jpeg', '.json'), 
+                    frame: event.target.result, 
+                    elements: []
+                };
+                uploadItem(item_data);
             };
-            uploadItem(item_data);
-        };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        }
     });
     // 键盘操作动作监听
     document.addEventListener('keyup', function(event) { // 单键

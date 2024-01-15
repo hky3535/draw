@@ -15,6 +15,7 @@ def index():
 @app.route("/items", methods=["GET"]) # GET 获取项目列表
 def items():
     items_list = os.listdir(storage)
+    items_list = sorted(items_list, key=lambda x: x.lower())
     return flask.jsonify(items_list)
 
 @app.route("/item", methods=["GET"]) # GET 获取某个项目的完整信息
